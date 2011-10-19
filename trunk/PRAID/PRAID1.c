@@ -1,8 +1,6 @@
-/*
- * PRAID1.c
- *
- *  Created on: 30/09/2011
- *      Author: pablo
- */
+#include <stdio.h>
 
-
+int mainPRAID(void){
+  // Definir
+  return 0;
+}
