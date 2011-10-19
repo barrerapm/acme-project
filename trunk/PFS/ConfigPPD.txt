@@ -1,0 +1,6 @@
+path = /home/pablo/workspace2/z_Pruebas/fat32b.disk
+bytes_per_sector = 512
+heads = 64
+cylinders = 00
+sectors_per_track = 32
+
