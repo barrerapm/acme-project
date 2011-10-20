@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include "PFS.h"
 #include "PPD.h"
+#include "FAT.h"
 #include "utils.h"
 #define ROOT_ENTRY_BYTES 32
 #define MAX_FILE_NAME_LENGHT 28
@@ -16,6 +17,8 @@
 #define ATRR_LONG_NAME 0x0F
 
 ConfigPFS config_pfs; // Estructura global config_ppd
+
+int CLUS = 4;
 
 int main(void) {
 	Sector* sector = (Sector*) malloc(sizeof(Sector));
@@ -57,6 +60,13 @@ int main(void) {
 	// Data Region
 	//PFS_read_DataRegion(bs);
 	PFS_read_file_content(bs, FAT_table, "ArchC.txt");
+	int *free_clusters;
+	free_clusters= (int*) malloc(sizeof(int));
+	int n_free_clusters = 59458; // Arreglar, porque si pido 1 cluster mas explota todo
+	FAT_get_free_clusters(bs, fs_info, FAT_table, n_free_clusters, free_clusters);
+	int i;
+	for(i = 0; i < n_free_clusters ; i++)
+		printf("Libre %d: %d\n",i,free_clusters[i]); // Prueba, muestra vector de clusters libres
 
 	// Cerrar disco
 	PPD_close_disk();
@@ -72,7 +82,7 @@ void PFS_file_list(BootSector* bs) { // Prueba para mostrar entradas de los arch
 	int n_entry, total_entries = (bs->bytes_per_sector * bs->sectors_per_cluster) / ROOT_ENTRY_BYTES;
 	ln();
 	printf("> File list\n");
-	Adressing_read_cluster(bs, cluster, 4/*ROOT_CLUSTER*/); // Modificar cluster a mostrar
+	Adressing_read_cluster(bs, cluster, CLUS/*ROOT_CLUSTER*/); // Modificar cluster a mostrar
 	for (n_entry = 0; n_entry < total_entries; n_entry++) {
 		PFS_load_entry(cluster, dir_entry, long_dir_entry, n_entry);
 		if (dir_entry->file_attributes == 0x20 || long_dir_entry->attributes == 0x20 || dir_entry->file_attributes == 0x10 || long_dir_entry->attributes == 0x10) {
@@ -130,7 +140,7 @@ int PFS_total_file_clusters(BootSector* bs, DirEntry* dir_entry) {
 int PFS_search_file_entry(BootSector* bs, DirEntry* dir_entry, LongDirEntry* long_dir_entry, const char* path) {
 	Cluster* cluster = (Cluster*) malloc(sizeof(Cluster));
 	int n_entry = 0;
-	Adressing_read_cluster(bs, cluster, 4); // Modificar para que busque en el cluster necesario
+	Adressing_read_cluster(bs, cluster, CLUS); // Modificar para que busque en el cluster necesario
 	PFS_load_entry(cluster, dir_entry, long_dir_entry, n_entry);
 	while (strcmp(PFS_file_name(dir_entry, long_dir_entry), path) && n_entry < 10 /*total_entries*/) {
 		PFS_load_entry(cluster, dir_entry, long_dir_entry, ++n_entry);
