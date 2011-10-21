@@ -25,28 +25,35 @@ int FAT_get_free_clusters(BootSector* bs, FSInfo* fs_info, TablaFAT* FAT_table, 
 		return -1;
 	}
 	int n = 0;
-	int cluster = free_clusters[n] = fs_info->most_recently_alloc_cluster + 1;
+	int cluster = free_clusters[n] = fs_info->most_recently_alloc_cluster - bs->fat32_cluster_num_dir_start + 1;
 	int max_entry = sizeof(FAT_table->entry)/4;
 
 	while((n_free_clusters > n) &&( cluster < max_entry)){
+		cluster++;
 		if(FAT_table->entry[cluster + bs->fat32_cluster_num_dir_start] == 0){ // Es cluster libre
 			free_clusters = realloc(free_clusters, sizeof(int)*((++n)+1));
 			free_clusters[n] = cluster;
 		}
-		cluster++;
 	}
 	cluster = 0;
 	while (n_free_clusters > n){
+		cluster++;
 		if(FAT_table->entry[cluster + bs->fat32_cluster_num_dir_start] == 0){ // Es cluster libre
 					free_clusters = realloc(free_clusters, sizeof(int)*(++n+1));
 					free_clusters[n] = cluster;
 				}
-				cluster++;
 	}
 	return 0;
 }
 
-void FAT_write_FAT_entry() {
-	// Definir
+void FAT_write_FAT_entry(BootSector* bs, FSInfo* fs_info, TablaFAT* FAT_table, int n_free_clusters, int* free_clusters ) {
+	int i;
+	for (i = 0; i < n_free_clusters -1; i++){
+		FAT_table->entry[free_clusters[i] + bs->fat32_cluster_num_dir_start] = free_clusters[i+1];
+		fs_info->most_recently_alloc_cluster = free_clusters[i];
+		--(fs_info->free_clusters);
+	}
+	FAT_table->entry[free_clusters[i] + bs->fat32_cluster_num_dir_start] = LAST_FILE_CLUSTER;
+	fs_info->most_recently_alloc_cluster = free_clusters[i];
+	--(fs_info->free_clusters);
 }
-
