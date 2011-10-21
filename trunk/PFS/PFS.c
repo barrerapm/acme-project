@@ -18,7 +18,7 @@
 
 ConfigPFS config_pfs; // Estructura global config_ppd
 
-int CLUS = 4;
+int CLUS = 1;
 
 int main(void) {
 	Sector* sector = (Sector*) malloc(sizeof(Sector));
@@ -58,15 +58,36 @@ int main(void) {
 	PFS_file_list(bs);
 
 	// Data Region
-	//PFS_read_DataRegion(bs);
 	PFS_read_file_content(bs, FAT_table, "ArchC.txt");
+
+	// Obtener clusters libres
+	int i;
 	int *free_clusters;
 	free_clusters= (int*) malloc(sizeof(int));
-	int n_free_clusters = 59458; // Arreglar, porque si pido 1 cluster mas explota todo
+	int n_free_clusters = 5;//59458;
 	FAT_get_free_clusters(bs, fs_info, FAT_table, n_free_clusters, free_clusters);
-	int i;
+
 	for(i = 0; i < n_free_clusters ; i++)
-		printf("Libre %d: %d\n",i,free_clusters[i]); // Prueba, muestra vector de clusters libres
+		printf("Libre %d: %d\n",i,free_clusters[i]);
+
+	// Escribir clusters libres
+	FAT_write_FAT_entry(bs, fs_info, FAT_table, n_free_clusters, free_clusters);
+	PFSPrint_FAT_table(*FAT_table);
+
+	free (free_clusters);
+
+	// Listar directorio
+	char** file_names;
+	int n_file_names = 0;
+	file_names = (char**) malloc(sizeof(char*)*n_file_names);
+	PFS_directory_list(bs,FAT_table,"CarpetaB",file_names, &n_file_names);
+
+	for(i = 0; i < n_file_names; i++)
+		printf("Name %d: %s\n",i,file_names[i]);
+
+	for (i=0; i < n_file_names; i++)
+	  free (file_names[i]);
+  	free (file_names);
 
 	// Cerrar disco
 	PPD_close_disk();
@@ -75,15 +96,19 @@ int main(void) {
 	return 0;
 }
 
+int PFS_max_cluster_entries(BootSector* bs){
+	return (bs->bytes_per_sector * bs->sectors_per_cluster) / ROOT_ENTRY_BYTES;
+}
+
 void PFS_file_list(BootSector* bs) { // Prueba para mostrar entradas de los archivos
 	Cluster* cluster = (Cluster*) malloc(sizeof(Cluster));
 	DirEntry* dir_entry = (DirEntry*) malloc(sizeof(DirEntry));
 	LongDirEntry* long_dir_entry = (LongDirEntry*) malloc(sizeof(LongDirEntry));
-	int n_entry, total_entries = (bs->bytes_per_sector * bs->sectors_per_cluster) / ROOT_ENTRY_BYTES;
+	int n_entry;
 	ln();
 	printf("> File list\n");
 	Adressing_read_cluster(bs, cluster, CLUS/*ROOT_CLUSTER*/); // Modificar cluster a mostrar
-	for (n_entry = 0; n_entry < total_entries; n_entry++) {
+	for (n_entry = 0; n_entry < PFS_max_cluster_entries(bs); n_entry++) {
 		PFS_load_entry(cluster, dir_entry, long_dir_entry, n_entry);
 		if (dir_entry->file_attributes == 0x20 || long_dir_entry->attributes == 0x20 || dir_entry->file_attributes == 0x10 || long_dir_entry->attributes == 0x10) {
 			printf("> %s", PFS_file_name(dir_entry, long_dir_entry));
@@ -94,15 +119,35 @@ void PFS_file_list(BootSector* bs) { // Prueba para mostrar entradas de los arch
 	}
 }
 
-void PFS_directory_list(BootSector* bs, TablaFAT* FAT_table, const char* path) {
+void PFS_directory_list(BootSector* bs, TablaFAT* FAT_table, const char* dir_name, char** file_names, int* n_file_names) {
 	Cluster* cluster = (Cluster*) malloc(sizeof(Cluster));
 	DirEntry* dir_entry = (DirEntry*) malloc(sizeof(DirEntry));
 	LongDirEntry* long_dir_entry = (LongDirEntry*) malloc(sizeof(LongDirEntry));
-	int n_entry, total_entries = (bs->bytes_per_sector * bs->sectors_per_cluster) / ROOT_ENTRY_BYTES;
+	int i = 0, n_entry;
 
-	if (PFS_search_file_entry(bs, dir_entry, long_dir_entry, path) == 0) { // Busco la carpeta "path" y me devuelve su info basica
-		// Definir
+	if (PFS_search_file_entry(bs, dir_entry, long_dir_entry, dir_name) == 0) { // Busco la carpeta "dir_name" y me devuelve su info basica
+		Adressing_read_cluster(bs,cluster,PFS_n_first_cluster(dir_entry)-2); // Leo el cluster donde estan las entradas de "dir_name"
+		for (n_entry = 0; n_entry < PFS_max_cluster_entries(bs); n_entry++) { // Voy cargando los file_names
+			PFS_load_entry(cluster, dir_entry, long_dir_entry, n_entry); // Leo una entrada de un archivo dentro de "dir_name"
+			if((dir_entry->file_attributes == ATTR_DIRECTORY || dir_entry->file_attributes == ATTR_ARCHIVE)
+					&& long_dir_entry->sequence_number != 0xe5){
+				file_names = realloc(file_names, (i+1)*sizeof(char*));
+				file_names[i] = (char*) malloc(sizeof(char)*strlen(PFS_file_name(dir_entry, long_dir_entry)));
+				file_names[i++] = PFS_file_name(dir_entry, long_dir_entry);
+			}
+		}
+	} else {
+		printf("No se encontró el archivo\n");
 	}
+	*n_file_names = i;
+}
+
+void PFS_rename_file(BootSector* bs, TablaFAT* FAT_table, const char* path_name, const char* new_name ){
+	DirEntry* dir_entry = (DirEntry*) malloc(sizeof(DirEntry));
+	LongDirEntry* long_dir_entry = (LongDirEntry*) malloc(sizeof(LongDirEntry));
+	if (PFS_search_file_entry(bs, dir_entry, long_dir_entry, path_name) == 0) { // Busco la carpeta "path" y me devuelve su info basica
+		//Definir
+		}
 }
 
 void PFS_read_file_content(BootSector* bs, TablaFAT* FAT_table, const char* path) {
@@ -112,11 +157,10 @@ void PFS_read_file_content(BootSector* bs, TablaFAT* FAT_table, const char* path
 
 	if (PFS_search_file_entry(bs, dir_entry, long_dir_entry, path) == 0) { // Busco el archivo "path" y me devuelve su info basica
 		int i, n_entry, f_size_clusters = PFS_total_file_clusters(bs, dir_entry);
-		//int f_clusters[f_size_clusters];
 		int *f_clusters;
 		f_clusters= (int*) malloc(sizeof(int));
 
-		n_entry = (dir_entry->fst_cluster_high * 256 + dir_entry->fst_cluster_low); // Primer cluster del archivo
+		n_entry = PFS_n_first_cluster(dir_entry); // Primer cluster del archivo
 		f_clusters[0] = n_entry-2;
 		printf("Primer entrada en la FAT: %d\n", n_entry);
 		printf("Primer cluster en la Data Region: %d\n", f_clusters[0]);
@@ -130,7 +174,11 @@ void PFS_read_file_content(BootSector* bs, TablaFAT* FAT_table, const char* path
 			PFSPrint_cluster(bs, *cluster, f_clusters[i]);
 		}
 	} else
-		printf("No se encontró el archivo");
+		printf("No se encontró el archivo\n");
+}
+
+int PFS_n_first_cluster(DirEntry* dir_entry){
+	return (dir_entry->fst_cluster_high * 256 + dir_entry->fst_cluster_low);
 }
 
 int PFS_total_file_clusters(BootSector* bs, DirEntry* dir_entry) {
@@ -142,7 +190,7 @@ int PFS_search_file_entry(BootSector* bs, DirEntry* dir_entry, LongDirEntry* lon
 	int n_entry = 0;
 	Adressing_read_cluster(bs, cluster, CLUS); // Modificar para que busque en el cluster necesario
 	PFS_load_entry(cluster, dir_entry, long_dir_entry, n_entry);
-	while (strcmp(PFS_file_name(dir_entry, long_dir_entry), path) && n_entry < 10 /*total_entries*/) {
+	while (strcmp(PFS_file_name(dir_entry, long_dir_entry), path) && n_entry < 10 /*PFS_max_cluster_entries(bs)*/) {
 		PFS_load_entry(cluster, dir_entry, long_dir_entry, ++n_entry);
 	}
 	if (strcmp(PFS_file_name(dir_entry, long_dir_entry), path))
