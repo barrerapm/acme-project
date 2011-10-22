@@ -18,7 +18,7 @@
 
 ConfigPFS config_pfs; // Estructura global config_ppd
 
-int CLUS = 1;
+int CLUS = 4;
 
 int main(void) {
 	Sector* sector = (Sector*) malloc(sizeof(Sector));
@@ -58,46 +58,44 @@ int main(void) {
 	PFS_file_list(bs);
 
 	// Data Region
+	printf("\n> Leer contenido de un archivo\n");
 	PFS_read_file_content(bs, FAT_table, "ArchC.txt");
 
 	// Obtener clusters libres
-	int i;
-	int *free_clusters;
-	free_clusters= (int*) malloc(sizeof(int));
-	int n_free_clusters = 5;//59458;
+	printf("\n> Obtener clusters libres\n");
+	int i, *free_clusters, n_free_clusters = 5; //59458;
+	free_clusters = (int*) malloc(sizeof(int));
 	FAT_get_free_clusters(bs, fs_info, FAT_table, n_free_clusters, free_clusters);
 
-	for(i = 0; i < n_free_clusters ; i++)
-		printf("Libre %d: %d\n",i,free_clusters[i]);
+	for (i = 0; i < n_free_clusters; i++)
+		printf("Libre %d: %d\n", i, free_clusters[i]);
 
 	// Escribir clusters libres
+	printf("\n> Escribir clusters libres\n");
 	FAT_write_FAT_entry(bs, fs_info, FAT_table, n_free_clusters, free_clusters);
 	PFSPrint_FAT_table(*FAT_table);
 
-	free (free_clusters);
+	free(free_clusters);
 
 	// Listar directorio
+	printf("\n> Listar directorio\n");
 	char** file_names;
 	int n_file_names = 0;
-	file_names = (char**) malloc(sizeof(char*)*n_file_names);
-	PFS_directory_list(bs,FAT_table,"CarpetaB",file_names, &n_file_names);
+	file_names = (char**) malloc(sizeof(char*) * n_file_names);
+	PFS_directory_list(bs, FAT_table, "CarpetaB", file_names, &n_file_names);
 
-	for(i = 0; i < n_file_names; i++)
-		printf("Name %d: %s\n",i,file_names[i]);
+	for (i = 0; i < n_file_names; i++)
+		printf("Name %d: %s\n", i, file_names[i]);
 
-	for (i=0; i < n_file_names; i++)
-	  free (file_names[i]);
-  	free (file_names);
+	for (i = 0; i < n_file_names; i++)
+		free(file_names[i]);
+	free(file_names);
 
 	// Cerrar disco
 	PPD_close_disk();
 
 	//return fuse_main(argc, argv, &operaciones);
 	return 0;
-}
-
-int PFS_max_cluster_entries(BootSector* bs){
-	return (bs->bytes_per_sector * bs->sectors_per_cluster) / ROOT_ENTRY_BYTES;
 }
 
 void PFS_file_list(BootSector* bs) { // Prueba para mostrar entradas de los archivos
@@ -126,28 +124,27 @@ void PFS_directory_list(BootSector* bs, TablaFAT* FAT_table, const char* dir_nam
 	int i = 0, n_entry;
 
 	if (PFS_search_file_entry(bs, dir_entry, long_dir_entry, dir_name) == 0) { // Busco la carpeta "dir_name" y me devuelve su info basica
-		Adressing_read_cluster(bs,cluster,PFS_n_first_cluster(dir_entry)-2); // Leo el cluster donde estan las entradas de "dir_name"
+		Adressing_read_cluster(bs, cluster, PFS_n_first_file_cluster(dir_entry) - 2); // Leo el cluster donde estan las entradas de "dir_name"
 		for (n_entry = 0; n_entry < PFS_max_cluster_entries(bs); n_entry++) { // Voy cargando los file_names
 			PFS_load_entry(cluster, dir_entry, long_dir_entry, n_entry); // Leo una entrada de un archivo dentro de "dir_name"
-			if((dir_entry->file_attributes == ATTR_DIRECTORY || dir_entry->file_attributes == ATTR_ARCHIVE)
-					&& long_dir_entry->sequence_number != 0xe5){
-				file_names = realloc(file_names, (i+1)*sizeof(char*));
-				file_names[i] = (char*) malloc(sizeof(char)*strlen(PFS_file_name(dir_entry, long_dir_entry)));
+			if ((dir_entry->file_attributes == ATTR_DIRECTORY || dir_entry->file_attributes == ATTR_ARCHIVE) && long_dir_entry->sequence_number != 0xe5) {
+				file_names = realloc(file_names, (i + 1) * sizeof(char*));
+				file_names[i] = (char*) malloc(sizeof(char) * strlen(PFS_file_name(dir_entry, long_dir_entry)));
 				file_names[i++] = PFS_file_name(dir_entry, long_dir_entry);
 			}
 		}
 	} else {
-		printf("No se encontró el archivo\n");
+		printf("No se encontró la carpeta para PFS_directory_list\n");
 	}
 	*n_file_names = i;
 }
 
-void PFS_rename_file(BootSector* bs, TablaFAT* FAT_table, const char* path_name, const char* new_name ){
+void PFS_rename_file(BootSector* bs, TablaFAT* FAT_table, const char* path_name, const char* new_name) {
 	DirEntry* dir_entry = (DirEntry*) malloc(sizeof(DirEntry));
 	LongDirEntry* long_dir_entry = (LongDirEntry*) malloc(sizeof(LongDirEntry));
 	if (PFS_search_file_entry(bs, dir_entry, long_dir_entry, path_name) == 0) { // Busco la carpeta "path" y me devuelve su info basica
 		//Definir
-		}
+	}
 }
 
 void PFS_read_file_content(BootSector* bs, TablaFAT* FAT_table, const char* path) {
@@ -158,31 +155,23 @@ void PFS_read_file_content(BootSector* bs, TablaFAT* FAT_table, const char* path
 	if (PFS_search_file_entry(bs, dir_entry, long_dir_entry, path) == 0) { // Busco el archivo "path" y me devuelve su info basica
 		int i, n_entry, f_size_clusters = PFS_total_file_clusters(bs, dir_entry);
 		int *f_clusters;
-		f_clusters= (int*) malloc(sizeof(int));
+		f_clusters = (int*) malloc(sizeof(int));
 
-		n_entry = PFS_n_first_cluster(dir_entry); // Primer cluster del archivo
-		f_clusters[0] = n_entry-2;
-		printf("Primer entrada en la FAT: %d\n", n_entry);
-		printf("Primer cluster en la Data Region: %d\n", f_clusters[0]);
+		n_entry = PFS_n_first_file_cluster(dir_entry); // Primer cluster del archivo
+		f_clusters[0] = n_entry - bs->fat32_cluster_num_dir_start;
+		printf("Primer entrada en la FAT: %d\n", n_entry); // Prueba
+		printf("Primer cluster en la Data Region: %d\n", f_clusters[0]); // Prueba
 
 		FAT_get_file_clusters(bs, FAT_table, f_clusters);
 
-		printf("Cantidad de clusters del archivo: %d",f_size_clusters);
+		printf("Cantidad de clusters del archivo: %d", f_size_clusters); // Prueba
 
 		for (i = 0; i < f_size_clusters; i++) {
 			Adressing_read_cluster(bs, cluster, f_clusters[i]);
 			PFSPrint_cluster(bs, *cluster, f_clusters[i]);
 		}
 	} else
-		printf("No se encontró el archivo\n");
-}
-
-int PFS_n_first_cluster(DirEntry* dir_entry){
-	return (dir_entry->fst_cluster_high * 256 + dir_entry->fst_cluster_low);
-}
-
-int PFS_total_file_clusters(BootSector* bs, DirEntry* dir_entry) {
-	return ceil((double) dir_entry->file_size / (double) (bs->bytes_per_sector * bs->sectors_per_cluster));
+		printf("No se encontró el archivo para PFS_read_file_content\n");
 }
 
 int PFS_search_file_entry(BootSector* bs, DirEntry* dir_entry, LongDirEntry* long_dir_entry, const char* path) {
@@ -203,22 +192,22 @@ char* PFS_file_name(DirEntry* dir_entry, LongDirEntry* long_dir_entry) {
 	char name[MAX_FILE_NAME_LENGHT];
 	int i, k;
 	if (long_dir_entry->attributes == ATRR_LONG_NAME) { // Si es nombre largo
-		for (k = 0, i = 0; i < sizeof(long_dir_entry->name1)/2; i++, k++)
+		for (k = 0, i = 0; i < sizeof(long_dir_entry->name1) / 2; i++, k++)
 			name[i] = long_dir_entry->name1[k];
-		for (k = 0; k < sizeof(long_dir_entry->name2)/2; i++, k++)
+		for (k = 0; k < sizeof(long_dir_entry->name2) / 2; i++, k++)
 			name[i] = long_dir_entry->name2[k];
-		for (k = 0; k < sizeof(long_dir_entry->name3)/2; i++, k++)
+		for (k = 0; k < sizeof(long_dir_entry->name3) / 2; i++, k++)
 			name[i] = long_dir_entry->name3[k];
 		name[i] = '\0';
 	} else {
 		for (k = 0, i = 0; i < sizeof(dir_entry->dos_file_name); i++, k++)
 			name[i] = dir_entry->dos_file_name[k];
 		name[i++] = '.';
-		for(k=0;k<sizeof(dir_entry->dos_file_extension);i++,k++)
-			name[i]=dir_entry->dos_file_extension[k];
+		for (k = 0; k < sizeof(dir_entry->dos_file_extension); i++, k++)
+			name[i] = dir_entry->dos_file_extension[k];
 		name[i] = '\0';
 	}
-	char *pName = (char*) malloc(sizeof(name)*sizeof(char));
+	char *pName = (char*) malloc(sizeof(name) * sizeof(char));
 	strcpy(pName, name);
 	return pName;
 }
@@ -232,6 +221,18 @@ void PFS_load_entry(Cluster* cluster, DirEntry* dir_entry, LongDirEntry* long_di
 	for (i = 0; i < ROOT_ENTRY_BYTES; i++, j++)
 		entry[i] = cluster->sector[0].byte[j];
 	memcpy(dir_entry, entry, sizeof(entry));
+}
+
+int PFS_max_cluster_entries(BootSector* bs) {
+	return (bs->bytes_per_sector * bs->sectors_per_cluster) / ROOT_ENTRY_BYTES;
+}
+
+int PFS_n_first_file_cluster(DirEntry* dir_entry) {
+	return (dir_entry->fst_cluster_high * 256 + dir_entry->fst_cluster_low);
+}
+
+int PFS_total_file_clusters(BootSector* bs, DirEntry* dir_entry) {
+	return ceil((double) dir_entry->file_size / (double) (bs->bytes_per_sector * bs->sectors_per_cluster));
 }
 
 void PFS_inicializar_config(void) {
