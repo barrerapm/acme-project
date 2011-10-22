@@ -20,44 +20,44 @@ extern ConfigPFS config_pfs; // Estructura global config_ppd
 
 void PFSPrint_long_dir_entry(LongDirEntry* long_dir_entry) {
 	int i;
-/*
-	unsigned short utf16_name1[5];
-	unsigned short utf16_name2[6];
-	unsigned short utf16_name3[2];
-	strcpy(utf16_name1,long_dir_entry->name1);
-	strcpy(utf16_name2,long_dir_entry->name2);
-	strcpy(utf16_name3,long_dir_entry->name3);
+	/*
+	 unsigned short utf16_name1[5];
+	 unsigned short utf16_name2[6];
+	 unsigned short utf16_name3[2];
+	 strcpy(utf16_name1,long_dir_entry->name1);
+	 strcpy(utf16_name2,long_dir_entry->name2);
+	 strcpy(utf16_name3,long_dir_entry->name3);
 
-	char utf8_name1[sizeof(utf16_name1) / 2];
-	char utf8_name2[sizeof(utf16_name2) / 2];
-	char utf8_name3[sizeof(utf16_name3) / 2];
-	int	len_utf8_name1 = 0, len_utf8_name2 = 0, len_utf8_name3 = 0;
-	unicode_utf16_to_utf8_inbuffer(utf16_name1, sizeof(utf16_name1), utf8_name1, &len_utf8_name1);
-	unicode_utf16_to_utf8_inbuffer(utf16_name2, sizeof(utf16_name2), utf8_name2, &len_utf8_name2);
-	unicode_utf16_to_utf8_inbuffer(utf16_name3, sizeof(utf16_name3), utf8_name3, &len_utf8_name3);
-*/
+	 char utf8_name1[sizeof(utf16_name1) / 2];
+	 char utf8_name2[sizeof(utf16_name2) / 2];
+	 char utf8_name3[sizeof(utf16_name3) / 2];
+	 int	len_utf8_name1 = 0, len_utf8_name2 = 0, len_utf8_name3 = 0;
+	 unicode_utf16_to_utf8_inbuffer(utf16_name1, sizeof(utf16_name1), utf8_name1, &len_utf8_name1);
+	 unicode_utf16_to_utf8_inbuffer(utf16_name2, sizeof(utf16_name2), utf8_name2, &len_utf8_name2);
+	 unicode_utf16_to_utf8_inbuffer(utf16_name3, sizeof(utf16_name3), utf8_name3, &len_utf8_name3);
+	 */
 	ln();
 	printf(">> Long Directory Entry\n");
 	printf("sequence_number: %x\n", long_dir_entry->sequence_number);
 
 	printf("name_1+2+3: ");
-	for (i = 0; i < sizeof(long_dir_entry->name1)/2; i++)
+	for (i = 0; i < sizeof(long_dir_entry->name1) / 2; i++)
 		printf("%1c", long_dir_entry->name1[i]);
-	for (i = 0; i < sizeof(long_dir_entry->name2)/2; i++)
+	for (i = 0; i < sizeof(long_dir_entry->name2) / 2; i++)
 		printf("%1c", long_dir_entry->name2[i]);
-	for (i = 0; i < sizeof(long_dir_entry->name3)/2; i++)
+	for (i = 0; i < sizeof(long_dir_entry->name3) / 2; i++)
 		printf("%1c", long_dir_entry->name3[i]);
 	printf(" (UTF16)");
 	ln();/*
-	printf("name_1+2+3: ");
-	for (i = 0; i < sizeof(len_utf8_name1); i++)
-		printf("%1c", utf8_name1[i]);
-	for (i = 0; i < sizeof(len_utf8_name2); i++)
-		printf("%1c", utf8_name2[i]);
-	for (i = 0; i < sizeof(len_utf8_name3); i++)
-		printf("%1c", utf8_name3[i]);
-	printf(" (UTF8)");
-	ln();*/
+	 printf("name_1+2+3: ");
+	 for (i = 0; i < sizeof(len_utf8_name1); i++)
+	 printf("%1c", utf8_name1[i]);
+	 for (i = 0; i < sizeof(len_utf8_name2); i++)
+	 printf("%1c", utf8_name2[i]);
+	 for (i = 0; i < sizeof(len_utf8_name3); i++)
+	 printf("%1c", utf8_name3[i]);
+	 printf(" (UTF8)");
+	 ln();*/
 	printf("attributes: %x\n", long_dir_entry->attributes);
 	printf("reserved: %x\n", long_dir_entry->reserved);
 	printf("checksum: %x\n", long_dir_entry->checksum);
@@ -66,13 +66,13 @@ void PFSPrint_long_dir_entry(LongDirEntry* long_dir_entry) {
 
 void PFSPrint_dir_entry(DirEntry* dir_entry) {
 	int i;
-/*
-	char utf8_name1[sizeof(dir_entry->dos_file_name) / 2];
-	char utf8_name2[sizeof(dir_entry->dos_file_extension) / 2];
-	int	len_utf8_name1 = 0, len_utf8_name2 = 0;
-	unicode_utf16_to_utf8_inbuffer(dir_entry->dos_file_name, sizeof(dir_entry->dos_file_name), utf8_name1, &len_utf8_name1);
-	unicode_utf16_to_utf8_inbuffer(dir_entry->dos_file_extension, sizeof(dir_entry->dos_file_extension), utf8_name2, &len_utf8_name2);
-*/
+	/*
+	 char utf8_name1[sizeof(dir_entry->dos_file_name) / 2];
+	 char utf8_name2[sizeof(dir_entry->dos_file_extension) / 2];
+	 int	len_utf8_name1 = 0, len_utf8_name2 = 0;
+	 unicode_utf16_to_utf8_inbuffer(dir_entry->dos_file_name, sizeof(dir_entry->dos_file_name), utf8_name1, &len_utf8_name1);
+	 unicode_utf16_to_utf8_inbuffer(dir_entry->dos_file_extension, sizeof(dir_entry->dos_file_extension), utf8_name2, &len_utf8_name2);
+	 */
 	printf(">> Directory Entry\n");
 	printf("dos_file_name+extension: ");
 	for (i = 0; i < sizeof(dir_entry->dos_file_name); i++)
@@ -82,14 +82,14 @@ void PFSPrint_dir_entry(DirEntry* dir_entry) {
 		printf("%c", dir_entry->dos_file_extension[i]);
 	printf(" (UTF16)");
 	ln();/*
-	printf("dos_file_name+extension: ");
-	for (i = 0; i < len_utf8_name1; i++)
-		printf("%c", utf8_name1[i]);
-	printf(".");
-	for (i = 0; i < len_utf8_name2; i++)
-		printf("%c", utf8_name2[i]);
-	printf(" (UTF8)");
-	ln();*/
+	 printf("dos_file_name+extension: ");
+	 for (i = 0; i < len_utf8_name1; i++)
+	 printf("%c", utf8_name1[i]);
+	 printf(".");
+	 for (i = 0; i < len_utf8_name2; i++)
+	 printf("%c", utf8_name2[i]);
+	 printf(" (UTF8)");
+	 ln();*/
 	printf("file_attributes: %x ", dir_entry->file_attributes);
 	switch (dir_entry->file_attributes) {
 	case 0x01:
@@ -137,7 +137,7 @@ void PFSPrint_FAT_table(TablaFAT FAT_table) {
 	int i, total_entries = sizeof(FAT_table.entry) / FAT_ENTRY_BYTES; // Total de bytes de FAT_table/4 bytes
 	ln();
 	printf("> FAT Table\n");
-	for (i = 0; i < 45/*cambiar por: total_entries*/; i++)
+	for (i = 0; i < 20/*cambiar por: total_entries*/; i++)
 		printf("Entrada %d: %x\n", i, FAT_table.entry[i]);
 }
 
