@@ -25,3 +25,4 @@ void Adressing_read_cluster(BootSector* bs, Cluster* cluster, int n_cluster) {
 		cluster->sector[i] = *sector;
 	}
 }
+
