@@ -14,13 +14,15 @@ void Disk_load_bootsector(BootSector* bs) {
 	memcpy(bs, sector->byte, sizeof(BootSector));
 }
 
-void Disk_load_FSInfo(BootSector* bs, FSInfo* fs_info) {
+void Disk_load_FSInfo(FSInfo* fs_info) {
+	extern BootSector* bs;
 	Sector* sector = (Sector*) malloc(sizeof(Sector));
 	PPD_read_sector(sector, bs->fat32_sector_num_fs_inf_sec);
 	memcpy(fs_info, sector->byte, sizeof(FSInfo));
 }
 
-void Disk_load_FAT(BootSector* bs, TablaFAT* FAT_table) {
+void Disk_load_FAT(TablaFAT* FAT_table) {
+	extern BootSector* bs;
 	Sector* sector = (Sector*) malloc(sizeof(Sector));
 	int i, FAT_sector = bs->reserved_sector_count;
 	int last_FAT_sector = FAT_sector + bs->fat32_sectors_per_fat;
