@@ -10,7 +10,7 @@ typedef struct config_ppd {
 } ConfigPPD;
 
 typedef struct sector {
-	unsigned char byte[512];
+	uint8_t byte[512];
 } Sector;
 
 typedef struct cluster {
@@ -21,9 +21,9 @@ typedef struct block {
 	struct cluster cluster[2];
 } Block;
 
-int PPD_open_disk(void);
+int32_t PPD_open_disk(void);
 void PPD_read_sector(Sector* sector, int n_sector);
-int PPD_write_sector(Sector* sector, int n_sector);
+int32_t PPD_write_sector(Sector* sector, int n_sector);
 void PPD_close_disk(void);
 
 // Prints para pruebas
