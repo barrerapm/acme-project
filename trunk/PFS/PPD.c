@@ -21,7 +21,7 @@ void PPD_inicializar_config(void){
 	fclose(fi);
 }
 
-int PPD_open_disk(){
+int32_t PPD_open_disk(){
 	PPD_inicializar_config();
 	print_config_ppd(); // Prueba
 	if((fd=open(config_ppd.path,O_RDWR))==-1){
@@ -35,7 +35,7 @@ void PPD_read_sector(Sector* sector,int n_sector){
 	read(fd,sector->byte,config_ppd.bytes_per_sector);
 }
 
-int PPD_write_sector(Sector* sector,int n_sector){
+int32_t PPD_write_sector(Sector* sector,int n_sector){
 	lseek(fd,SEEK_SET+(n_sector*config_ppd.bytes_per_sector),SEEK_SET);
 	write(fd,sector->byte,config_ppd.bytes_per_sector);
 	return 0;
