@@ -116,6 +116,15 @@ int FUSE_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offs
 	(void) info;
 	printf("Paso por aca"); // Log
 
+    if(strcmp(path, "/") != 0){
+    	printf("");
+        return -ENOENT;
+    }
+
+    filler(buf, ".", NULL, 0);
+    filler(buf, "..", NULL, 0);
+    filler(buf, "" + 1, NULL, 0);
+
 	return 0;
 }
 
