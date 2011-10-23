@@ -13,10 +13,17 @@
 #define FREE_CLUSTER 0x0000000
 #define ATTR_DIRECTORY 0x10
 #define ATTR_ARCHIVE 0x20
-#define ATRR_LONG_NAME 0x0F
+#define ATTR_LONG_NAME 0x0F
 
 // Prints para pruebas
 extern ConfigPFS config_pfs; // Estructura global config_ppd
+
+void PFSPrint_dir_entry(int attr, LongDirEntry* long_dir_entry, DirEntry* dir_entry){
+	if(attr == ATTR_LONG_NAME)
+		PFSPrint_long_dir_entry(long_dir_entry);
+	else
+		PFSPrint_short_dir_entry(dir_entry);
+}
 
 void PFSPrint_long_dir_entry(LongDirEntry* long_dir_entry) {
 	int i;
@@ -64,7 +71,7 @@ void PFSPrint_long_dir_entry(LongDirEntry* long_dir_entry) {
 	printf("first_cluster_n: %x\n", long_dir_entry->first_cluster_n);
 }
 
-void PFSPrint_dir_entry(DirEntry* dir_entry) {
+void PFSPrint_short_dir_entry(DirEntry* dir_entry) {
 	int i;
 	/*
 	 char utf8_name1[sizeof(dir_entry->dos_file_name) / 2];
@@ -73,6 +80,7 @@ void PFSPrint_dir_entry(DirEntry* dir_entry) {
 	 unicode_utf16_to_utf8_inbuffer(dir_entry->dos_file_name, sizeof(dir_entry->dos_file_name), utf8_name1, &len_utf8_name1);
 	 unicode_utf16_to_utf8_inbuffer(dir_entry->dos_file_extension, sizeof(dir_entry->dos_file_extension), utf8_name2, &len_utf8_name2);
 	 */
+	ln();
 	printf(">> Directory Entry\n");
 	printf("dos_file_name+extension: ");
 	for (i = 0; i < sizeof(dir_entry->dos_file_name); i++)
@@ -133,15 +141,17 @@ void PFSPrint_dir_entry(DirEntry* dir_entry) {
 	printf("file_size: %x\n", dir_entry->file_size);
 }
 
-void PFSPrint_FAT_table(TablaFAT FAT_table) {
-	int i, total_entries = sizeof(FAT_table.entry) / FAT_ENTRY_BYTES; // Total de bytes de FAT_table/4 bytes
+void PFSPrint_FAT_table() {
+	extern TablaFAT* FAT_table;
+	int i, total_entries = sizeof(FAT_table->entry) / FAT_ENTRY_BYTES; // Total de bytes de FAT_table/4 bytes
 	ln();
 	printf("> FAT Table\n");
 	for (i = 0; i < 20/*cambiar por: total_entries*/; i++)
-		printf("Entrada %d: %x\n", i, FAT_table.entry[i]);
+		printf("Entrada %d: %x\n", i, FAT_table->entry[i]);
 }
 
-void PFSPrint_fs_info(FSInfo* fs_info) {
+void PFSPrint_fs_info() {
+	extern FSInfo* fs_info;
 	int i;
 	ln();
 	printf("> FS Info\n");
@@ -160,16 +170,18 @@ void PFSPrint_fs_info(FSInfo* fs_info) {
 	printf("sector_signature3: %d\n", fs_info->sector_signature3);
 }
 
-void PFSPrint_block(BootSector* bs, Block block, int n_block) {
+void PFSPrint_block(Block block, int n_block) {
+	extern BootSector* bs;
 	int i;
 	ln();
 	printf("> Block %d\n", n_block);
 	for (i = 0; i < config_pfs.clusters_per_block; i++) {
-		PFSPrint_cluster(bs, block.cluster[i], n_block * config_pfs.clusters_per_block + i);
+		PFSPrint_cluster(block.cluster[i], n_block * config_pfs.clusters_per_block + i);
 	}
 }
 
-void PFSPrint_cluster(BootSector* bs, Cluster cluster, int n_cluster) {
+void PFSPrint_cluster(Cluster cluster, int n_cluster) {
+	extern BootSector* bs;
 	int i;
 	ln();
 	printf("> Cluster %u\n", n_cluster);
@@ -193,7 +205,8 @@ void PFSPrint_config_pfs(void) {
 	ln();
 }
 
-void PFSPrint_bootsector(BootSector* bs) {
+void PFSPrint_bootsector() {
+	extern BootSector* bs;
 	int i;
 	ln();
 	printf("> Boot Sector\n");
@@ -222,7 +235,7 @@ void PFSPrint_bootsector(BootSector* bs) {
 		printf("fat32_sectors_per_fat: %u\n", bs->fat32_sectors_per_fat);
 		printf("fat32_flags: %u\n", bs->fat32_flags);
 		printf("fat32_version: %u\n", bs->fat32_version);
-		printf("fat32_cluster_num_dir_start: %u\n", bs->fat32_cluster_num_dir_start);
+		printf("fat32_first_cluster: %u\n", bs->fat32_first_cluster);
 		printf("fat32_sector_num_fs_inf_sec: %u\n", bs->fat32_sector_num_fs_inf_sec);
 		printf("fat32_sector_num_copy_bs: %u\n", bs->fat32_sector_num_copy_bs);
 		printf("fat32_reserved: %u ", bs->fat32_reserved[0]);
