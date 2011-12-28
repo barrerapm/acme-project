@@ -1,0 +1,517 @@
+_______________________________________________________________
+Timestamp: Fri Dec 23 03:52:13 2011
+
+
+Archivo: test2.txt
+
+Tamaño de Bloque de la Cache: 16KBs
+
+Cantidad de Bloques de la Cache: 1
+
+Contenido del Bloque 0 de la Cache:
+Manejo de Altos Errores Heavy version v2.2
+Subtitulo nuevo v 2.0
+La aplicación mostrará por consola y generará en el correspondiente archivo Log el código de
+error y la descripción de dicho código obtenido del sistema para la ejecución fallida de cualquier
+función del sistema invocada. Para los errores pertinentes a la aplicación se deberá respetar
+las normas de logueo del trabajo práctico.
+Formato del archivo Log
+Todos los archivos de Log deberán respetar un mismo formato de presentación. En caso de
+utilizar distintos niveles detalle, el cambio entre uno u otro debe ser configurable por el usuario.
+Se le recomienda al alumno registrar en este archivo los eventos más importantes de la
+ejecución de la aplicación, así como los valores necesarios para conocer el estado del
+sistema en un determinado momento. Esto es muy importante ya que en instancias finales de
+evaluación es probable que se haga uso de este archivo en situaciones donde la aplicación
+falla o se requiera hacer un seguimiento del la ejecucion, por lo que este tiene que ser legible.
+El formato a respetar es el siguiente:
+[FECHA] [NOMBREPROCESO] [PIDPROCESO][THREAD ID]: TIPO DE LOG: DATO
+Descripción
+● Fecha
+   Fecha del sistema. Deberá respetar el siguiente formato [HH:mm:ss.SSS].
+● Nombre Proceso
+   Nombre del proceso que está escribiendo en el Log.
+● PID Proceso
+   Process ID del proceso que está escribiendo en el Log.
+● Thread ID
+   ID del thread que escribe en el archivo. Opcional para el thread principal del proceso.
+● Tipo de Log
+   INFO, WARN, ERROR ó DEBUG nivel de detalle según lo que consideren apropiado.
+23/29
+Trabajo Práctico de Sistemas Operativos
+●
+2C2011 - UTN – FRBA
+Data
+Descripción del evento ó cualquier información que se considere apropiada.
+Eventos de logueo obligatorio
+Algunos eventos deberán ser logueados obligatoriamente con cierta información de contexto, a
+saber:
+Proceso File System
+●
+Lista de clusters de un archivo cuando este es abierto.
+Proceso RAID
+●
+●
+●
+Conexión y desconexión de nuevos discos.
+Cambios de estados en el RAID.
+Llegada de una petición y Disco donde es procesado.
+Proceso Planificado del Disco
+Este proceso logueara toda su información unicamente en un archivo. No deberá imprimir
+nada por consola, solo la consola logueara por stdout.
+● Llegada de un pedido, junto con la información de este.
+    ○ Tipo (lectura / escritura)
+     ○ Sectores
+● Información de planificación cuando una petición es procesada.
+Cola de Pedidos: [ 10, 11, 12 ... 50, 51, 52 ] Tamaño: 30
+Posición actual: 0
+Sector Solicitado: 10
+Sectores Recorridos: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+Tiempo consumido: 16ms
+Próximo Sector: 11
+24/29
+Trabajo Práctico de Sistemas Operativos
+2C2011 - UTN – FRBA
+Anexo B :: Protocolos de comunicación
+Protocolo NIPC – ( Network Inter-Process Comunication )
+Este protocolo se utilizará para comunicar todos los procesos a través de paquetes. Un
+paquete de datos es una unidad fundamental de transporte de información en todas las
+redes de computadoras modernas. Los paquetes al ser una unidad fundamental, no pueden ser
+divisibles. Por lo que no se puede descomponer un paquete en varias partes y enviarlas por
+separado. Nuestro protocolo se maneja a nivel bytes, los cuales tienen el siguiente significado:
+● Type
+   Identificador que determina el tipo de paquete que es. Esto hace referencia a la
+  información que está contenida en el Payload.
+● PayLoad Length
+   La longitud en bytes del campo siguiente, es decir del Payload.
+● Payload
+   Este campo de bytes de longitud indefinida, contiene la información que se necesita
+   enviar.
+Extensión del Protocolo NIPC
+El protocolo especificado anteriormente, especifica como deberá estar compuesto
+minimamente cada mensaje, pero esto no indica que no puede ser ampliado. El grupo pue_______________________________________________________________
+Timestamp: Fri Dec 23 03:53:07 2011
+
+
+Archivo: test2.txt
+
+Tamaño de Bloque de la Cache: 16KBs
+
+Cantidad de Bloques de la Cache: 1
+
+Contenido del Bloque 0 de la Cache:
+Manejo de Altos Errores Heavy version v2.2
+Subtitulo nuevo v 2.0
+La aplicación mostrará por consola y generará en el correspondiente archivo Log el código de
+error y la descripción de dicho código obtenido del sistema para la ejecución fallida de cualquier
+función del sistema invocada. Para los errores pertinentes a la aplicación se deberá respetar
+las normas de logueo del trabajo práctico.
+Formato del archivo Log
+Todos los archivos de Log deberán respetar un mismo formato de presentación. En caso de
+utilizar distintos niveles detalle, el cambio entre uno u otro debe ser configurable por el usuario.
+Se le recomienda al alumno registrar en este archivo los eventos más importantes de la
+ejecución de la aplicación, así como los valores necesarios para conocer el estado del
+sistema en un determinado momento. Esto es muy importante ya que en instancias finales de
+evaluación es probable que se haga uso de este archivo en situaciones donde la aplicación
+falla o se requiera hacer un seguimiento del la ejecucion, por lo que este tiene que ser legible.
+El formato a respetar es el siguiente:
+[FECHA] [NOMBREPROCESO] [PIDPROCESO][THREAD ID]: TIPO DE LOG: DATO
+Descripción
+● Fecha
+   Fecha del sistema. Deberá respetar el siguiente formato [HH:mm:ss.SSS].
+● Nombre Proceso
+   Nombre del proceso que está escribiendo en el Log.
+● PID Proceso
+   Process ID del proceso que está escribiendo en el Log.
+● Thread ID
+   ID del thread que escribe en el archivo. Opcional para el thread principal del proceso.
+● Tipo de Log
+   INFO, WARN, ERROR ó DEBUG nivel de detalle según lo que consideren apropiado.
+23/29
+Trabajo Práctico de Sistemas Operativos
+●
+2C2011 - UTN – FRBA
+Data
+Descripción del evento ó cualquier información que se considere apropiada.
+Eventos de logueo obligatorio
+Algunos eventos deberán ser logueados obligatoriamente con cierta información de contexto, a
+saber:
+Proceso File System
+●
+Lista de clusters de un archivo cuando este es abierto.
+Proceso RAID
+●
+●
+●
+Conexión y desconexión de nuevos discos.
+Cambios de estados en el RAID.
+Llegada de una petición y Disco donde es procesado.
+Proceso Planificado del Disco
+Este proceso logueara toda su información unicamente en un archivo. No deberá imprimir
+nada por consola, solo la consola logueara por stdout.
+● Llegada de un pedido, junto con la información de este.
+    ○ Tipo (lectura / escritura)
+     ○ Sectores
+● Información de planificación cuando una petición es procesada.
+Cola de Pedidos: [ 10, 11, 12 ... 50, 51, 52 ] Tamaño: 30
+Posición actual: 0
+Sector Solicitado: 10
+Sectores Recorridos: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+Tiempo consumido: 16ms
+Próximo Sector: 11
+24/29
+Trabajo Práctico de Sistemas Operativos
+2C2011 - UTN – FRBA
+Anexo B :: Protocolos de comunicación
+Protocolo NIPC – ( Network Inter-Process Comunication )
+Este protocolo se utilizará para comunicar todos los procesos a través de paquetes. Un
+paquete de datos es una unidad fundamental de transporte de información en todas las
+redes de computadoras modernas. Los paquetes al ser una unidad fundamental, no pueden ser
+divisibles. Por lo que no se puede descomponer un paquete en varias partes y enviarlas por
+separado. Nuestro protocolo se maneja a nivel bytes, los cuales tienen el siguiente significado:
+● Type
+   Identificador que determina el tipo de paquete que es. Esto hace referencia a la
+  información que está contenida en el Payload.
+● PayLoad Length
+   La longitud en bytes del campo siguiente, es decir del Payload.
+● Payload
+   Este campo de bytes de longitud indefinida, contiene la información que se necesita
+   enviar.
+Extensión del Protocolo NIPC
+El protocolo especificado anteriormente, especifica como deberá estar compuesto
+minimamente cada mensaje, pero esto no indica que no puede ser ampliado. El grupo pue_______________________________________________________________
+Timestamp: Fri Dec 23 03:53:51 2011
+
+
+Archivo: test2.txt
+
+Tamaño de Bloque de la Cache: 16KBs
+
+Cantidad de Bloques de la Cache: 1
+
+Contenido del Bloque 0 de la Cache:
+Manejo de Altos Errores Heavy version v2.2
+Subtitulo nuevo v 2.0
+La aplicación mostrará por consola y generará en el correspondiente archivo Log el código de
+error y la descripción de dicho código obtenido del sistema para la ejecución fallida de cualquier
+función del sistema invocada. Para los errores pertinentes a la aplicación se deberá respetar
+las normas de logueo del trabajo práctico.
+Formato del archivo Log
+Todos los archivos de Log deberán respetar un mismo formato de presentación. En caso de
+utilizar distintos niveles detalle, el cambio entre uno u otro debe ser configurable por el usuario.
+Se le recomienda al alumno registrar en este archivo los eventos más importantes de la
+ejecución de la aplicación, así como los valores necesarios para conocer el estado del
+sistema en un determinado momento. Esto es muy importante ya que en instancias finales de
+evaluación es probable que se haga uso de este archivo en situaciones donde la aplicación
+falla o se requiera hacer un seguimiento del la ejecucion, por lo que este tiene que ser legible.
+El formato a respetar es el siguiente:
+[FECHA] [NOMBREPROCESO] [PIDPROCESO][THREAD ID]: TIPO DE LOG: DATO
+Descripción
+● Fecha
+   Fecha del sistema. Deberá respetar el siguiente formato [HH:mm:ss.SSS].
+● Nombre Proceso
+   Nombre del proceso que está escribiendo en el Log.
+● PID Proceso
+   Process ID del proceso que está escribiendo en el Log.
+● Thread ID
+   ID del thread que escribe en el archivo. Opcional para el thread principal del proceso.
+● Tipo de Log
+   INFO, WARN, ERROR ó DEBUG nivel de detalle según lo que consideren apropiado.
+23/29
+Trabajo Práctico de Sistemas Operativos
+●
+2C2011 - UTN – FRBA
+Data
+Descripción del evento ó cualquier información que se considere apropiada.
+Eventos de logueo obligatorio
+Algunos eventos deberán ser logueados obligatoriamente con cierta información de contexto, a
+saber:
+Proceso File System
+●
+Lista de clusters de un archivo cuando este es abierto.
+Proceso RAID
+●
+●
+●
+Conexión y desconexión de nuevos discos.
+Cambios de estados en el RAID.
+Llegada de una petición y Disco donde es procesado.
+Proceso Planificado del Disco
+Este proceso logueara toda su información unicamente en un archivo. No deberá imprimir
+nada por consola, solo la consola logueara por stdout.
+● Llegada de un pedido, junto con la información de este.
+    ○ Tipo (lectura / escritura)
+     ○ Sectores
+● Información de planificación cuando una petición es procesada.
+Cola de Pedidos: [ 10, 11, 12 ... 50, 51, 52 ] Tamaño: 30
+Posición actual: 0
+Sector Solicitado: 10
+Sectores Recorridos: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+Tiempo consumido: 16ms
+Próximo Sector: 11
+24/29
+Trabajo Práctico de Sistemas Operativos
+2C2011 - UTN – FRBA
+Anexo B :: Protocolos de comunicación
+Protocolo NIPC – ( Network Inter-Process Comunication )
+Este protocolo se utilizará para comunicar todos los procesos a través de paquetes. Un
+paquete de datos es una unidad fundamental de transporte de información en todas las
+redes de computadoras modernas. Los paquetes al ser una unidad fundamental, no pueden ser
+divisibles. Por lo que no se puede descomponer un paquete en varias partes y enviarlas por
+separado. Nuestro protocolo se maneja a nivel bytes, los cuales tienen el siguiente significado:
+● Type
+   Identificador que determina el tipo de paquete que es. Esto hace referencia a la
+  información que está contenida en el Payload.
+● PayLoad Length
+   La longitud en bytes del campo siguiente, es decir del Payload.
+● Payload
+   Este campo de bytes de longitud indefinida, contiene la información que se necesita
+   enviar.
+Extensión del Protocolo NIPC
+El protocolo especificado anteriormente, especifica como deberá estar compuesto
+minimamente cada mensaje, pero esto no indica que no puede ser ampliado. El grupo pue_______________________________________________________________
+Timestamp: Fri Dec 23 03:54:11 2011
+
+
+Archivo: test2.txt
+
+Tamaño de Bloque de la Cache: 16KBs
+
+Cantidad de Bloques de la Cache: 1
+
+Contenido del Bloque 0 de la Cache:
+Manejo de Altos Errores Heavy version v2.2
+Subtitulo nuevo v 2.0
+La aplicación mostrará por consola y generará en el correspondiente archivo Log el código de
+error y la descripción de dicho código obtenido del sistema para la ejecución fallida de cualquier
+función del sistema invocada. Para los errores pertinentes a la aplicación se deberá respetar
+las normas de logueo del trabajo práctico.
+Formato del archivo Log
+Todos los archivos de Log deberán respetar un mismo formato de presentación. En caso de
+utilizar distintos niveles detalle, el cambio entre uno u otro debe ser configurable por el usuario.
+Se le recomienda al alumno registrar en este archivo los eventos más importantes de la
+ejecución de la aplicación, así como los valores necesarios para conocer el estado del
+sistema en un determinado momento. Esto es muy importante ya que en instancias finales de
+evaluación es probable que se haga uso de este archivo en situaciones donde la aplicación
+falla o se requiera hacer un seguimiento del la ejecucion, por lo que este tiene que ser legible.
+El formato a respetar es el siguiente:
+[FECHA] [NOMBREPROCESO] [PIDPROCESO][THREAD ID]: TIPO DE LOG: DATO
+Descripción
+● Fecha
+   Fecha del sistema. Deberá respetar el siguiente formato [HH:mm:ss.SSS].
+● Nombre Proceso
+   Nombre del proceso que está escribiendo en el Log.
+● PID Proceso
+   Process ID del proceso que está escribiendo en el Log.
+● Thread ID
+   ID del thread que escribe en el archivo. Opcional para el thread principal del proceso.
+● Tipo de Log
+   INFO, WARN, ERROR ó DEBUG nivel de detalle según lo que consideren apropiado.
+23/29
+Trabajo Práctico de Sistemas Operativos
+●
+2C2011 - UTN – FRBA
+Data
+Descripción del evento ó cualquier información que se considere apropiada.
+Eventos de logueo obligatorio
+Algunos eventos deberán ser logueados obligatoriamente con cierta información de contexto, a
+saber:
+Proceso File System
+●
+Lista de clusters de un archivo cuando este es abierto.
+Proceso RAID
+●
+●
+●
+Conexión y desconexión de nuevos discos.
+Cambios de estados en el RAID.
+Llegada de una petición y Disco donde es procesado.
+Proceso Planificado del Disco
+Este proceso logueara toda su información unicamente en un archivo. No deberá imprimir
+nada por consola, solo la consola logueara por stdout.
+● Llegada de un pedido, junto con la información de este.
+    ○ Tipo (lectura / escritura)
+     ○ Sectores
+● Información de planificación cuando una petición es procesada.
+Cola de Pedidos: [ 10, 11, 12 ... 50, 51, 52 ] Tamaño: 30
+Posición actual: 0
+Sector Solicitado: 10
+Sectores Recorridos: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+Tiempo consumido: 16ms
+Próximo Sector: 11
+24/29
+Trabajo Práctico de Sistemas Operativos
+2C2011 - UTN – FRBA
+Anexo B :: Protocolos de comunicación
+Protocolo NIPC – ( Network Inter-Process Comunication )
+Este protocolo se utilizará para comunicar todos los procesos a través de paquetes. Un
+paquete de datos es una unidad fundamental de transporte de información en todas las
+redes de computadoras modernas. Los paquetes al ser una unidad fundamental, no pueden ser
+divisibles. Por lo que no se puede descomponer un paquete en varias partes y enviarlas por
+separado. Nuestro protocolo se maneja a nivel bytes, los cuales tienen el siguiente significado:
+● Type
+   Identificador que determina el tipo de paquete que es. Esto hace referencia a la
+  información que está contenida en el Payload.
+● PayLoad Length
+   La longitud en bytes del campo siguiente, es decir del Payload.
+● Payload
+   Este campo de bytes de longitud indefinida, contiene la información que se necesita
+   enviar.
+Extensión del Protocolo NIPC
+El protocolo especificado anteriormente, especifica como deberá estar compuesto
+minimamente cada mensaje, pero esto no indica que no puede ser ampliado. El grupo pue_______________________________________________________________
+Timestamp: Fri Dec 23 03:54:32 2011
+
+
+Archivo: test2.txt
+
+Tamaño de Bloque de la Cache: 16KBs
+
+Cantidad de Bloques de la Cache: 2
+
+Contenido del Bloque 0 de la Cache:
+Manejo de Altos Errores Heavy version v2.2
+Subtitulo nuevo v 2.0
+La aplicación mostrará por consola y generará en el correspondiente archivo Log el código de
+error y la descripción de dicho código obtenido del sistema para la ejecución fallida de cualquier
+función del sistema invocada. Para los errores pertinentes a la aplicación se deberá respetar
+las normas de logueo del trabajo práctico.
+Formato del archivo Log
+Todos los archivos de Log deberán respetar un mismo formato de presentación. En caso de
+utilizar distintos niveles detalle, el cambio entre uno u otro debe ser configurable por el usuario.
+Se le recomienda al alumno registrar en este archivo los eventos más importantes de la
+ejecución de la aplicación, así como los valores necesarios para conocer el estado del
+sistema en un determinado momento. Esto es muy importante ya que en instancias finales de
+evaluación es probable que se haga uso de este archivo en situaciones donde la aplicación
+falla o se requiera hacer un seguimiento del la ejecucion, por lo que este tiene que ser legible.
+El formato a respetar es el siguiente:
+[FECHA] [NOMBREPROCESO] [PIDPROCESO][THREAD ID]: TIPO DE LOG: DATO
+Descripción
+● Fecha
+   Fecha del sistema. Deberá respetar el siguiente formato [HH:mm:ss.SSS].
+● Nombre Proceso
+   Nombre del proceso que está escribiendo en el Log.
+● PID Proceso
+   Process ID del proceso que está escribiendo en el Log.
+● Thread ID
+   ID del thread que escribe en el archivo. Opcional para el thread principal del proceso.
+● Tipo de Log
+   INFO, WARN, ERROR ó DEBUG nivel de detalle según lo que consideren apropiado.
+23/29
+Trabajo Práctico de Sistemas Operativos
+●
+2C2011 - UTN – FRBA
+Data
+Descripción del evento ó cualquier información que se considere apropiada.
+Eventos de logueo obligatorio
+Algunos eventos deberán ser logueados obligatoriamente con cierta información de contexto, a
+saber:
+Proceso File System
+●
+Lista de clusters de un archivo cuando este es abierto.
+Proceso RAID
+●
+●
+●
+Conexión y desconexión de nuevos discos.
+Cambios de estados en el RAID.
+Llegada de una petición y Disco donde es procesado.
+Proceso Planificado del Disco
+Este proceso logueara toda su información unicamente en un archivo. No deberá imprimir
+nada por consola, solo la consola logueara por stdout.
+● Llegada de un pedido, junto con la información de este.
+    ○ Tipo (lectura / escritura)
+     ○ Sectores
+● Información de planificación cuando una petición es procesada.
+Cola de Pedidos: [ 10, 11, 12 ... 50, 51, 52 ] Tamaño: 30
+Posición actual: 0
+Sector Solicitado: 10
+Sectores Recorridos: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+Tiempo consumido: 16ms
+Próximo Sector: 11
+24/29
+Trabajo Práctico de Sistemas Operativos
+2C2011 - UTN – FRBA
+Anexo B :: Protocolos de comunicación
+Protocolo NIPC – ( Network Inter-Process Comunication )
+Este protocolo se utilizará para comunicar todos los procesos a través de paquetes. Un
+paquete de datos es una unidad fundamental de transporte de información en todas las
+redes de computadoras modernas. Los paquetes al ser una unidad fundamental, no pueden ser
+divisibles. Por lo que no se puede descomponer un paquete en varias partes y enviarlas por
+separado. Nuestro protocolo se maneja a nivel bytes, los cuales tienen el siguiente significado:
+● Type
+   Identificador que determina el tipo de paquete que es. Esto hace referencia a la
+  información que está contenida en el Payload.
+● PayLoad Length
+   La longitud en bytes del campo siguiente, es decir del Payload.
+● Payload
+   Este campo de bytes de longitud indefinida, contiene la información que se necesita
+   enviar.
+Extensión del Protocolo NIPC
+El protocolo especificado anteriormente, especifica como deberá estar compuesto
+minimamente cada mensaje, pero esto no indica que no puede ser ampliado. El grupo puede
+tomar decisiones sobre agregar nuevos campos al protocolo para facilitar su desarrollo. Esto
+cambios deben ser especificados en un documento y presentado al ayudante asignado durante
+el desarrollo y a los evaluadores cuando llegu
+Contenido del Bloque 1 de la Cache:
+e el momento del coloquio.
+Handshake
+Handshaking ("apretón de manos") es un proceso de negociación que establece de forma
+dinámica los parámetros de un canal de comunicaciones establecido entre dos entidades antes
+de que comience la comunicación normal por el canal. Por lo general, un proceso que tiene
+lugar cuando un equipo está a punto de comunicarse con un dispositivo exterior a establecer
+normas para la comunicación. Esto quiere decir que una vez establecida la conexión y antes de
+25/29
+Trabajo Práctico de Sistemas Operativos
+2C2011 - UTN – FRBA
+empezar con la comunicación normal, tanto el cliente como el servidor se identifican y negocian
+parámetros de comunicación.
+Para el trabajo práctico la funcionalidad del Handshake será la de negociar la comunicación
+entre dos procesos, haciendo que estos se identifiquen y se informen los parámetros iniciales.
+Proceso Disco -> Proceso RAID
+El Proceso Disco enviara un paquete NIPC con los siguientes valores específicos:
+● Type: 0 ( El 0 indica que el paquete es del tipo Handshake )
+● Payload: El identificador del disco
+El Proceso RAID responder con un paquete NIPC con los siguientes valores específicos:
+● Type: 0 ( El 0 indica que el paquete es del tipo Handshake )
+● Payload:
+○ Vacío, por lo que Payload Length sera 0, en caso de que la conexión se correcta
+○ Código/Mensaje de error indicando que la negociación fue fallida y el motivo de
+esto. Luego de enviar este paquete el Proceso RAID cierra la conexión.
+Proceso File System -> Proceso RAID
+El Proceso File System enviara un paquete NIPC con los siguientes valores específicos:
+● Type: 0 ( El 0 indica que el paquete es del tipo Handshake )
+● Payload: Vacio
+El Proceso RAID responder con un paquete NIPC con los siguientes valores específicos:
+● Type: 0 ( El 0 indica que el paquete es del tipo Handshake )
+● Payload:
+○ Vacío, por lo que Payload Length sera 0, en caso de que la conexión se correcta
+○ Código/Mensaje de error indicando que la negociación fue fallida y el motivo de
+esto (Como puede ser que el Proceso RAID1 aun no este activo). Luego de
+enviar este paquete el Proceso RAID1 cierra la conexión.
+Proceso File System -> Proceso Disco
+El Proceso File System enviara un paquete NIPC con los siguientes valores específicos:
+● Type: 0 ( El 0 indica que el paquete es del tipo Handshake )
+● Payload: Vacio
+El Proceso Disco responder con un paquete NIPC con los siguientes valores específicos:
+● Type: 0 ( El 0 indica que el paquete es del tipo Handshake )
+● Payload:
+○ Vacío, por lo que Payload Length sera 0, en caso de que la conexión se correcta
+○ Código/Mensaje de error indicando que la negociación fue fallida y el motivo de
+esto. Luego de enviar este paquete el Proceso RAID1 cierra la conexión.
+26/29
+Trabajo Práctico de Sistemas Operativos
+2C2011 - UTN – FRBA
+Anexo C :: Introducción FAT32
+El objetivo de este Anexo es el de explicar, de manera superficial, algunos de los detalles de
+FAT. Este no es un documento definitivo y completo sino que es una guia de referencia para
+aclarar algunos detalles de manera mas simple. El Alumnado deberá investigar por su cuenta,
+en los links indicados, los detalles mas completos y puntuales sobre FAT.
+Diseño
+El sistema de archivos FAT esta compuesto por tres secciones básicas:
+1. Región Resevados: Esta se encuentra localizada al principio de la partición o disco. El
+primer sector de esta región reservado , es decir el 0, es el Sector de Boot. Este sector
+es llamado BIOS Parameter Block, el cual incluye información del File System como así
+también punteros a la ubicación de otros sectores. El tamaño de esta región esta
+indicada dentro del Sector de Boot.
+En el sector 1 se encuentra el Sector de Información del File System y en el sector 6 se
+encuen

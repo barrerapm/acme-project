@@ -1,0 +1,7 @@
+bytes_per_sector = 512
+blocks_per_cluster = 4
+sectors_per_block = 2
+cache_size = 0
+ip = 127.0.0.1
+server_port = 3002
+max_connections = 5
