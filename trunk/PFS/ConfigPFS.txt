@@ -1,3 +1,0 @@
-bytes_per_sector = 512
-sectors_per_cluster = 8
-clusters_per_block = 2
