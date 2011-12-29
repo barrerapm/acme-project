@@ -10,6 +10,7 @@
 #include <semaphore.h>
 #include "Socket.h"
 #include "Pack.h"
+#include "Aux.h"
 
 ConfigSocket config_socket;
 
