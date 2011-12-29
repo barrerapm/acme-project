@@ -383,12 +383,10 @@ void Hilo_PPP_disk_fault(Info_PPD* info_ppd, Hilo_PPD* hilo_PPD, t_list* petitio
 	// AGREGADO MARTIN 11-12-28
 	if (*hilo_PPD->state == STATE_SYNC) {
 		uint32_t n, count;
-		Info_PPD* aux;
+		uint32_t* aux;
 		count = collection_list_size(historic_petitions);
 		for (n = 0; n < count; n++) {
 			aux = collection_list_remove(historic_petitions, 0);
-			free(aux->nipc->payload);
-			free(aux->nipc);
 			free(aux);
 		}
 	}

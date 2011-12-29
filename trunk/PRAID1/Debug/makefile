@@ -25,13 +25,13 @@ endif
 all: PRAID1
 
 dependents:
-	-cd /home/utn_so/Desarrollo/Workspace2/Commons/Debug && $(MAKE) clean all
+	-cd /home/utn_so/Desarrollo/Workspace/Commons/Debug && $(MAKE) all
 
 # Tool invocations
-PRAID1: $(OBJS) $(USER_OBJS) /home/utn_so/Desarrollo/Workspace2/Commons/Debug/libCommons.so
+PRAID1: $(OBJS) $(USER_OBJS) /home/utn_so/Desarrollo/Workspace/Commons/Debug/libCommons.so
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L"/home/utn_so/Desarrollo/Workspace2/Commons/Debug" -o "PRAID1" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L"/home/utn_so/Desarrollo/Workspace/Commons/Debug" -o "PRAID1" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -42,6 +42,6 @@ clean:
 
 .PHONY: all clean dependents
 .SECONDARY:
-/home/utn_so/Desarrollo/Workspace2/Commons/Debug/libCommons.so:
+/home/utn_so/Desarrollo/Workspace/Commons/Debug/libCommons.so:
 
 -include ../makefile.targets
