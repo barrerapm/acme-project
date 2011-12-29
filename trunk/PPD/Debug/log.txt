@@ -1,0 +1,28 @@
+18:08:51:25 Runner/2296 [PPD_open_disk]/89578592 WARNING: Error al mapear el disco en memoria
+18:09:02:937 Runner/2299 [PPD_open_disk]/89578592 WARNING: Error al mapear el disco en memoria
+18:10:25:321 Runner/2321 [PPD_open_disk]/89578592 WARNING: Disco mapeado en memoria
+18:12:41:782 Runner/2321 [main]/89578592 WARNING: No se pudo recibir el pedido del PFS
+18:15:09:650 Runner/2373 [PPD_open_disk]/89578592 WARNING: Disco mapeado en memoria
+18:25:10:189 Runner/2373 [main]/89578592 WARNING: No se pudo recibir el pedido del PFS
+18:27:10:603 Runner/2494 [PPD_open_disk]/89578592 WARNING: Disco mapeado en memoria
+18:58:28:834 Runner/3208 [PPD_open_disk]/3062478544 WARNING: Disco mapeado en memoria
+18:58:52:942 Runner/3218 [PPD_open_disk]/3061585616 WARNING: Disco mapeado en memoria
+19:05:17:157 Runner/3265 [PPD_open_disk]/3063289552 WARNING: Disco mapeado en memoria
+19:05:38:702 Runner/3367 [PPD_open_disk]/3063293648 WARNING: Disco mapeado en memoria
+19:06:04:178 Runner/3378 [PPD_open_disk]/3063236304 WARNING: Disco mapeado en memoria
+19:06:24:182 Runner/3382 [PPD_open_disk]/3062204112 WARNING: Disco mapeado en memoria
+19:11:42:876 Runner/3446 [PPD_open_disk]/3063076560 WARNING: Disco mapeado en memoria
+19:16:20:782 Runner/3378 [main]/3063236304 WARNING: No se pudo recibir el pedido del RAID
+19:16:20:782 Runner/3382 [main]/3062204112 WARNING: No se pudo recibir el pedido del RAID
+19:16:20:782 Runner/3446 [main]/3063076560 WARNING: No se pudo recibir el pedido del RAID
+19:17:49:929 Runner/3557 [PPD_open_disk]/3061868240 WARNING: Disco mapeado en memoria
+19:18:11:181 Runner/3561 [PPD_open_disk]/3062589136 WARNING: Disco mapeado en memoria
+19:20:08:233 Runner/3576 [PPD_open_disk]/3063146192 WARNING: Disco mapeado en memoria
+19:28:11:553 Runner/3642 [PPD_open_disk]/3061515984 WARNING: Disco mapeado en memoria
+19:30:21:776 Runner/3658 [PPD_open_disk]/3061487312 WARNING: Disco mapeado en memoria
+19:34:04:210 Runner/3557 [main]/3061868240 WARNING: No se pudo recibir el pedido del RAID
+19:34:04:215 Runner/3642 [main]/3061515984 WARNING: No se pudo recibir el pedido del RAID
+19:34:04:215 Runner/3658 [main]/3061487312 WARNING: No se pudo recibir el pedido del RAID
+19:51:26:127 Runner/1777 [PPD_open_disk]/3061839568 WARNING: Disco mapeado en memoria
+19:52:04:228 Runner/1777 [main]/3061839568 WARNING: No se pudo recibir el pedido del PFS
+19:54:11:391 Runner/1847 [PPD_open_disk]/3062208208 WARNING: Disco mapeado en memoria
