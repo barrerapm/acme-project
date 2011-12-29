@@ -32,7 +32,7 @@
 								<option id="gnu.c.compiler.option.include.paths.36408982" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Commons}&quot;"/>
 								</option>
-								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1139958456" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
+								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1139958456" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__USE_LARGEFILE"/>
 									<listOptionValue builtIn="false" value="_LARGEFILE_SOURCE"/>
 									<listOptionValue builtIn="false" value="_FILE_OFFSET_BITS=64"/>
