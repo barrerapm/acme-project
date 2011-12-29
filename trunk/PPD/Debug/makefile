@@ -25,7 +25,7 @@ endif
 all: PPD
 
 dependents:
-	-cd /home/utn_so/Desarrollo/Workspace2/Commons/Debug && $(MAKE) all
+	-cd /home/utn_so/Desarrollo/Workspace2/Commons/Debug && $(MAKE) clean all
 
 # Tool invocations
 PPD: $(OBJS) $(USER_OBJS) /home/utn_so/Desarrollo/Workspace2/Commons/Debug/libCommons.so
