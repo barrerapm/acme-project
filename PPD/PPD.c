@@ -89,31 +89,31 @@ int 	num_fds;
 		return -1;
 	}
 	++total_connections;
-	if (!strcmp(config_ppd.modo_inicio, "LISTEN")) {
-		pid_t process_id;
-		char* parameters[] = { "ConsolePPD", config_ppd.path_unix, NULL };
+	//if (!strcmp(config_ppd.modo_inicio, "LISTEN")) {
+	pid_t process_id;
+	char* parameters[] = { "ConsolePPD", config_ppd.path_unix, NULL };
 
-		process_id = fork();
+	process_id = fork();
 
-		switch (process_id) {
-		case -1:
-			/* Error al crear el proceso hijo */
-			printf("Error al crear el proceso hijo\n");
-			break;
-		case 0:
-			/* Poceso hijo */
-			if (execv(config_ppd.console_path, parameters) == -1) {
-				perror("La cague en el execv");
-				return EXIT_FAILURE;
-			}
-			break;
-		default:
-			/* Proceso padre */
-			printf("La id del proceso hijo es: %d\n", process_id);
-			break;
+	switch (process_id) {
+	case -1:
+		/* Error al crear el proceso hijo */
+		printf("Error al crear el proceso hijo\n");
+		break;
+	case 0:
+		/* Poceso hijo */
+		if (execv(config_ppd.console_path, parameters) == -1) {
+			perror("La cague en el execv");
+			return EXIT_FAILURE;
 		}
-
+		break;
+	default:
+		/* Proceso padre */
+		printf("La id del proceso hijo es: %d\n", process_id);
+		break;
 	}
+
+	//}
 	sem_init(&sem_cont_consumidor, 0, 0);
 
 	steps = MAX_STEPS = 128;
@@ -167,6 +167,7 @@ int 	num_fds;
 
 			for (n = 0; n < num_fds; n++) {
 
+				Aux_printf("Iteracion: %d, event_fd: %d, server_console_fd: %d, client_fd: %d\n", n, events[n].data.fd,server_console_fd,client_fd);
 				if (events[n].data.fd == server_console_fd) {
 					if ((client_fd = Socket_accept_client(server_console_fd)) == -1) {
 						PPD_log_print("warning", "[main]", "No se pudo aceptar el cliente de la consola");
@@ -346,6 +347,8 @@ int 	num_fds;
 			Aux_printf("[P] ALGUIEN SE QUIERE CONECTAR (%ld)\n", Aux_actual_microseconds());
 
 			for (n = 0; n < num_fds; n++) {
+				//Aux_printf("Iteracion: %d, fd: %d, consolefd: %d, clientfd: %d\n", n, events[n].data.fd,server_console_fd,client_fd);
+				Aux_printf("Iteracion: %d, event_fd: %d, server_console_fd: %d, client_fd: %d\n", n, events[n].data.fd,server_console_fd,client_fd);
 				if (events[n].data.fd == server_console_fd) {
 
 					if ((client_fd = Socket_accept_client(server_console_fd)) == -1) {
@@ -366,7 +369,7 @@ int 	num_fds;
 
 					Aux_printf("[P] AGREGUE LA NUEVA CONEXION AL EPOLL\n");
 
-				} else if (events[n].data.fd == client_fd) {
+				} else {
 
 					Aux_printf("[P] HAY UN SERVER HACIENDO SEND fd: %d\n", events[n].data.fd);
 
