@@ -135,7 +135,7 @@ int PFS_rename_path(const char* path, const char* new_path);
 void fsinfo(int, char **);
 int finfo(int, char **);
 int PFS_n_block_by_sector(int n_sector);
-int PFS_n_clusters_by_bytes(long int bytes);
+uint32_t PFS_n_clusters_by_bytes(uint32_t bytes);
 void PFS_set_block_by_FAT_entry(int n_block, Block* block);
 int PFS_first_FAT_n_entry_in_block(int n_block);
 int PFS_n_block_by_FAT_entry(int n_entry);

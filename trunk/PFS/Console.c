@@ -50,8 +50,8 @@ void Console_PFS() {
 
 int Console_fsinfo(int n_params, char **params) {
 	printf(">> fsinfo\n");
-	printf("Clusters ocupados: \t\t\t %d\n", PFS_n_clusters_by_bytes(bs->total_sectors2 * bs->bytes_per_sector) - fs_info->free_clusters);
-	printf("Clusters libres: \t\t\t %d\n", fs_info->free_clusters);
+	printf("Clusters ocupados: \t\t\t %u\n", PFS_n_clusters_by_bytes(bs->total_sectors2 * bs->bytes_per_sector) - fs_info->free_clusters);
+	printf("Clusters libres: \t\t\t %u\n", fs_info->free_clusters);
 	printf("Tamaño de un sector: \t\t\t %d Bytes\n", bs->bytes_per_sector);
 	printf("Tamaño de un cluster: \t\t\t %d Bytes\n", config_pfs.blocks_per_cluster * config_pfs.sectors_per_block * bs->bytes_per_sector);
 	printf("Tamaño de la FAT: \t\t\t %.2f KBs\n", (double) ((bs->fat32_sectors_per_fat) * (bs->bytes_per_sector)) / 1024.);

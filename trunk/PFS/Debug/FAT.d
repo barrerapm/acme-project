@@ -1,31 +1,31 @@
 FAT.d FAT.o: ../FAT.c ../PFS.h \
- /home/utn_so/Desarrollo/Workspace2/Commons/Socket.h \
- /home/utn_so/Desarrollo/Workspace2/Commons/Struct.h \
- /home/utn_so/Desarrollo/Workspace2/Commons/list.h \
- /home/utn_so/Desarrollo/Workspace2/Commons/collections.h \
- /home/utn_so/Desarrollo/Workspace2/Commons/utils.h ../FAT.h \
- /home/utn_so/Desarrollo/Workspace2/Commons/log.h \
- /home/utn_so/Desarrollo/Workspace2/Commons/Type.h ../AddressPFS.h \
- /home/utn_so/Desarrollo/Workspace2/Commons/Aux.h
+ /home/utn_so/Desarrollo/Workspace/Commons/Socket.h \
+ /home/utn_so/Desarrollo/Workspace/Commons/Struct.h \
+ /home/utn_so/Desarrollo/Workspace/Commons/list.h \
+ /home/utn_so/Desarrollo/Workspace/Commons/collections.h \
+ /home/utn_so/Desarrollo/Workspace/Commons/utils.h ../FAT.h \
+ /home/utn_so/Desarrollo/Workspace/Commons/log.h \
+ /home/utn_so/Desarrollo/Workspace/Commons/Type.h ../AddressPFS.h \
+ /home/utn_so/Desarrollo/Workspace/Commons/Aux.h
 
 ../PFS.h:
 
-/home/utn_so/Desarrollo/Workspace2/Commons/Socket.h:
+/home/utn_so/Desarrollo/Workspace/Commons/Socket.h:
 
-/home/utn_so/Desarrollo/Workspace2/Commons/Struct.h:
+/home/utn_so/Desarrollo/Workspace/Commons/Struct.h:
 
-/home/utn_so/Desarrollo/Workspace2/Commons/list.h:
+/home/utn_so/Desarrollo/Workspace/Commons/list.h:
 
-/home/utn_so/Desarrollo/Workspace2/Commons/collections.h:
+/home/utn_so/Desarrollo/Workspace/Commons/collections.h:
 
-/home/utn_so/Desarrollo/Workspace2/Commons/utils.h:
+/home/utn_so/Desarrollo/Workspace/Commons/utils.h:
 
 ../FAT.h:
 
-/home/utn_so/Desarrollo/Workspace2/Commons/log.h:
+/home/utn_so/Desarrollo/Workspace/Commons/log.h:
 
-/home/utn_so/Desarrollo/Workspace2/Commons/Type.h:
+/home/utn_so/Desarrollo/Workspace/Commons/Type.h:
 
 ../AddressPFS.h:
 
-/home/utn_so/Desarrollo/Workspace2/Commons/Aux.h:
+/home/utn_so/Desarrollo/Workspace/Commons/Aux.h:
