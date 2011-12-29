@@ -4,12 +4,12 @@
 #include <errno.h>
 #include <string.h>
 #include <semaphore.h>
-//#include "Struct.h"
 #include "Socket.h"
 #include "Addressing.h"
 #include "Pack.h"
 #include "log.h"
 #include "Type.h"
+#include "Aux.h"
 
 extern t_log* project_log;
 
