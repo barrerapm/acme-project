@@ -1,0 +1,4 @@
+19:05:22:258 Runner/3263 [PRAID1_PPD]/3055029104 WARNING: No se pudo enviar respuesta de pedido al PPD
+19:05:48:830 Runner/3365 [PRAID1_PPD]/3053181808 WARNING: No se pudo enviar respuesta de pedido al PPD
+19:25:33:976 Runner/3555 [PRAID1_PPD]/3025140592 WARNING: No se pudo enviar respuesta de pedido al PPD
+19:25:40:860 Runner/3555 [PRAID1_PPD]/3045690224 WARNING: No se pudo enviar respuesta de pedido al PPD
