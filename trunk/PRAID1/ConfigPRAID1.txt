@@ -1,0 +1,7 @@
+ip_PFS = 127.0.0.1
+server_PFS_port = 3002
+max_PFS_connections = 2
+ip_PPD = 127.0.0.1
+server_PPD_port = 4002
+max_PPD_connections = 2
+console = 1
