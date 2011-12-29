@@ -25,7 +25,7 @@ endif
 all: PRAID1
 
 dependents:
-	-cd /home/utn_so/Desarrollo/Workspace2/Commons/Debug && $(MAKE) all
+	-cd /home/utn_so/Desarrollo/Workspace2/Commons/Debug && $(MAKE) clean all
 
 # Tool invocations
 PRAID1: $(OBJS) $(USER_OBJS) /home/utn_so/Desarrollo/Workspace2/Commons/Debug/libCommons.so

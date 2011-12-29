@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lpthread -licui18n -lCommons
+LIBS := -lCommons -lpthread -licui18n
 
