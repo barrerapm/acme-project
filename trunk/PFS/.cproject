@@ -44,7 +44,7 @@
 									<listOptionValue builtIn="false" value="icui18n"/>
 								</option>
 								<option id="gnu.c.link.option.paths.831404808" name="Library search path (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Commons/Release}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Commons/Debug}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1174795291" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -66,7 +66,7 @@
 				<externalSettings containerId="Commons;" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
 					<externalSetting>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/Commons"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/Commons/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/Commons/Debug"/>
 						<entry flags="RESOLVED" kind="libraryFile" name="Commons"/>
 					</externalSetting>
 				</externalSettings>
