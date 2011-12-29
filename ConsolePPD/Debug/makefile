@@ -28,7 +28,7 @@ all: ConsolePPD
 ConsolePPD: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -L"/home/utn_so/Desarrollo/Workspace2/Commons/Debug" -o "ConsolePPD" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -L"/home/utn_so/Desarrollo/Workspace/Commons/Debug" -o "ConsolePPD" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

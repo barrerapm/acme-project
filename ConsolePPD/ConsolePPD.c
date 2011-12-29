@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
 		Console_info, Console_clean, Console_trace, Console_help, Console_exit};
 
 	while (1) {
-		printf(">> Ingrese el numero de la funcion seguido de los parametros\n");
+		printf(">> Ingrese el nombre del comando seguido de los parametros\n");
 		/*printf(" · Console_info: \t1\n");
 		 printf(" · Console_clean: \t\t 2 start_cluster end_cluster\n");
 		 printf(" · Console_trace: \t\t 3 n_sector1 [n_sector2|n_sector3|n_sector4|n_sector5]\n");*/
