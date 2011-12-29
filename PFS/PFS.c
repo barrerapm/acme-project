@@ -244,7 +244,8 @@ int PFS_rename_path(const char* path, const char* new_path) {
 	// Obtenemos el numero de cluster de la carpeta del new_path
 	LongDirEntry* long_dir_entry = (LongDirEntry*) malloc(sizeof(LongDirEntry));
 	DirEntry* dir_entry = (DirEntry*) malloc(sizeof(DirEntry));
-	if (PFS_get_path_entries(new_path, long_dir_entry, dir_entry, &aux_entry, &n_cluster_content) == -1) {
+	int new_entry;
+	if (PFS_get_path_entries(new_path, long_dir_entry, dir_entry, &new_entry, &n_cluster_content) == -1) {
 		Aux_printf("No se encontro el archivo %s, obtuve el cluster de la carpeta\n", new_path);
 	} else {
 		Aux_printf("El archivo %s ya existe, se reemplaza\n", new_path);
@@ -259,25 +260,57 @@ int PFS_rename_path(const char* path, const char* new_path) {
 		log_warning(project_log, "[PFS_rename_path]", "%s %s", "No se encontro la entrada del archivo", path);
 		return -1;
 	}
+	int n_block, n_sector, offset_entry;
 
-	// Marcar las entradas long y short sus entradas en la FAT como FREE_USED_ENTRY
-	if (PFS_set_path_entries_free(path) == -1) {
-		log_warning(project_log, "[PFS_rename_path]", "%s %s", "No se pudieron poner como libres las entradas del archivo", path);
-		return -1;
-	}
+	Cluster* cluster;
+
+	// Leo el cluster de la carpeta del archivo/carpeta
+	cluster = (Cluster*) malloc(sizeof(Cluster));
+	AddressPFS_read_cluster(cluster, aux_content);
+
+	long_dir_entry->sequence_number = FREE_USED_ENTRY;
+	uint8_t aux_attr = dir_entry->file_attributes;
+	dir_entry->file_attributes = FREE_ENTRY;
+
+	// Calculo en que byte de que sector de que bloque está la entrada long del archivo
+	offset_entry = aux_entry;
+
+	// Modifico el cluster, marcando las entradas como libres usadas y lo grabo en Data Region
+	int entry_off = offset_entry * ENTRY_SIZE;
+	PFS_n_block_n_sector_of_cluster_by_bytes(&entry_off, &n_block, &n_sector);
+	memcpy(&(cluster->block[n_block].sector[n_sector].byte[entry_off]), long_dir_entry, ENTRY_SIZE);
+	entry_off = (offset_entry + 1) * ENTRY_SIZE;
+	PFS_n_block_n_sector_of_cluster_by_bytes(&entry_off, &n_block, &n_sector);
+	memcpy(&(cluster->block[n_block].sector[n_sector].byte[entry_off]), dir_entry, ENTRY_SIZE);
+
+	AddressPFS_write_cluster(aux_content, cluster);
+
+	long_dir_entry->sequence_number = LAST_LONG_ENTRY;
+	dir_entry->file_attributes = aux_attr;
 
 	// Cambiarle nombre a las entradas y desmarcarlas como FREE_USED_ENTRY
 	unsigned char* new_path_name = (unsigned char*) PFS_path_name(new_path);
 	PFS_set_file_name(new_path_name, long_dir_entry, dir_entry);
 	free(new_path_name);
-	long_dir_entry->sequence_number = LAST_LONG_ENTRY;
 
-	// Escribir las entradas modificadas en un lugar nuevo en carpeta del archivo/carpeta new_path
-	if (PFS_write_entries(n_cluster_content, long_dir_entry, dir_entry) == -1) {
-		free(long_dir_entry), free(dir_entry);
-		log_warning(project_log, "[PFS_create_dir]", "%s", "No se pudieron escribir las entradas modificadas");
-		return -1;
+	// Leo el cluster de la carpeta del archivo/carpeta
+	AddressPFS_read_cluster(cluster, n_cluster_content);
+
+	// Calculo en que byte de que sector de que bloque está la entrada long del archivo
+	if (aux_content != n_cluster_content) {
+		offset_entry = new_entry;
+	} else {
+		int x_cluster;
+		LongDirEntry* aux_long = (LongDirEntry*) malloc(sizeof(LongDirEntry));
+		DirEntry* aux_dir = (DirEntry*) malloc(sizeof(DirEntry));
+		PFS_get_path_entries(path, aux_long, aux_dir, &offset_entry, &x_cluster);
+		free(aux_long), free(aux_dir);
 	}
+	PFS_n_block_n_sector_of_cluster_by_bytes(&offset_entry, &n_block, &n_sector);
+	memcpy(&(cluster->block[n_block].sector[n_sector].byte[offset_entry * ENTRY_SIZE]), long_dir_entry, ENTRY_SIZE);
+	memcpy(&(cluster->block[n_block].sector[n_sector].byte[(offset_entry + 1) * ENTRY_SIZE]), dir_entry, ENTRY_SIZE);
+
+	AddressPFS_write_cluster(n_cluster_content, cluster);
 
 	free(long_dir_entry), free(dir_entry);
 	log_info(project_log, "[PFS_rename_path]", "%s %s%s %s", "Se renombro el archivo", path, ". Ahora es", new_path);
@@ -452,14 +485,15 @@ int PFS_set_path_entries_free(const char* path) {
 
 	char** file_names = (char**) malloc(sizeof(char*));
 	int i = 0, n_file_names;
+	char* aux_path;
 	if (dir_entry->file_attributes == ATTR_DIRECTORY) {
-		PFS_directory_list(path,&file_names,&n_file_names);
-		while(n_file_names != 0){
-			PFS_set_path_entries_free(file_names[i++]);
-			free(file_names);
-			file_names = (char**) malloc(sizeof(char*));
-			PFS_directory_list(path,&file_names,&n_file_names);
+		PFS_directory_list(path, &file_names, &n_file_names);
+		while (i < n_file_names) {
+			aux_path = Aux_strings_concatenate((char*) path, file_names[i++]);
+			PFS_set_path_entries_free(aux_path);
+			free(aux_path);
 		}
+		free(file_names);
 	}
 
 	// Leo el cluster de la carpeta del archivo/carpeta
@@ -470,9 +504,12 @@ int PFS_set_path_entries_free(const char* path) {
 	int n_block, n_sector, offset_entry = long_n_entry;
 	PFS_n_block_n_sector_of_cluster_by_bytes(&offset_entry, &n_block, &n_sector);
 
+	long_dir_entry->sequence_number = FREE_USED_ENTRY;
+	dir_entry->file_attributes = FREE_ENTRY;
 	// Modifico el cluster, marcando las entradas como libres usadas y lo grabo en Data Region
-	cluster->block[n_block].sector[n_sector].byte[offset_entry * ENTRY_SIZE] = FREE_USED_ENTRY;
-	cluster->block[n_block].sector[n_sector].byte[(offset_entry + 1) * ENTRY_SIZE] = FREE_USED_ENTRY;
+	memcpy(&(cluster->block[n_block].sector[n_sector].byte[offset_entry * ENTRY_SIZE]), long_dir_entry, ENTRY_SIZE);
+	memcpy(&(cluster->block[n_block].sector[n_sector].byte[(offset_entry + 1) * ENTRY_SIZE]), dir_entry, ENTRY_SIZE);
+
 	AddressPFS_write_cluster(n_cluster_content, cluster);
 
 	// Si el contenido del archivo/carpeta no tiene un cluster asignado, no modifico la FAT
@@ -486,10 +523,12 @@ int PFS_set_path_entries_free(const char* path) {
 	int n_file_clusters, *file_clusters = (int*) malloc(sizeof(int));
 	file_clusters[0] = PFS_n_first_file_cluster(dir_entry);
 	FAT_get_file_clusters(&file_clusters, &n_file_clusters);
+	Aux_printf("[PFS_set_path_entries_free] Cantidad de clusters del archivo: %d\n", n_file_clusters);
 	FAT_write_FAT_free_entry(n_file_clusters, file_clusters);
 
 	free(long_dir_entry), free(dir_entry), free(file_clusters), free(cluster);
 	log_info(project_log, "[PFS_set_path_entries_free]", "%s %s", "Se removio el archivo/carpeta", path);
+
 	return 0;
 }
 
@@ -514,15 +553,14 @@ int PFS_get_file_entries(Cluster* cluster, const char* file_name, LongDirEntry* 
 			//printf("Entrada short!\n");
 			aux_attr = -ATTR_LONG_NAME;
 		}
-		if(attr == -ATTR_LONG_NAME){
+		if (attr == -ATTR_LONG_NAME) {
 			aux_attr = -ATTR_LONG_NAME;
 		}
 		aux_file_name = PFS_get_file_name(aux_attr, long_dir_entry, dir_entry);
 		//printf("aux_file_name: %s, file_name: %s\n", aux_file_name, file_name);
-	} while (strcmp(aux_file_name, file_name) &&
-			(long_dir_entry->sequence_number != FREE_ENTRY) && (long_dir_entry->sequence_number != FREE_USED_ENTRY)
-			//(dir_entry->file_attributes != FREE_ENTRY) && (dir_entry->dos_file_name[0] != FREE_USED_ENTRY)
-			);
+	} while (strcmp(aux_file_name, file_name) && (long_dir_entry->sequence_number != FREE_ENTRY) && (long_dir_entry->sequence_number != FREE_USED_ENTRY)
+	//(dir_entry->file_attributes != FREE_ENTRY) && (dir_entry->dos_file_name[0] != FREE_USED_ENTRY)
+	);
 	/*
 	 printf("########\n");
 	 if (aux_attr == -ATTR_LONG_NAME)
@@ -530,10 +568,9 @@ int PFS_get_file_entries(Cluster* cluster, const char* file_name, LongDirEntry* 
 	 */
 	// Si encontré la long del archivo, leo la short y devuelvo la posicion de la long
 	//printf("Sec n: %d\n",long_dir_entry->sequence_number);
-	if (!strcmp(aux_file_name, file_name)
-			&& (((long_dir_entry->sequence_number != FREE_ENTRY) && (long_dir_entry->sequence_number != FREE_USED_ENTRY))
-					//|| ((dir_entry->file_attributes != FREE_ENTRY) && (dir_entry->dos_file_extension[0] != FREE_USED_ENTRY))
-					)) {
+	if (!strcmp(aux_file_name, file_name) && (((long_dir_entry->sequence_number != FREE_ENTRY) && (long_dir_entry->sequence_number != FREE_USED_ENTRY))
+	//|| ((dir_entry->file_attributes != FREE_ENTRY) && (dir_entry->dos_file_extension[0] != FREE_USED_ENTRY))
+			)) {
 		//printf("Nombre igual, sec_numb != free y used\n");
 		if (aux_attr != -ATTR_LONG_NAME) {
 			PFS_load_entry(cluster, *n_entry, long_dir_entry, dir_entry);
@@ -780,9 +817,7 @@ int PFS_directory_list(const char* dir_path, char*** file_names, int* n_file_nam
  }
  */
 int PFS_is_visible_file_entry(LongDirEntry* long_dir_entry, DirEntry* dir_entry) {
-	return ((dir_entry->file_attributes == ATTR_DIRECTORY) || (dir_entry->file_attributes == ATTR_ARCHIVE)) && (dir_entry->file_attributes != FREE_ENTRY)
-			&& (dir_entry->dos_file_name[0] != FREE_USED_ENTRY);
-	//(long_dir_entry->sequence_number != FREE_USED_ENTRY) && (long_dir_entry->sequence_number != FREE_ENTRY);
+	return ((dir_entry->file_attributes == ATTR_DIRECTORY) || (dir_entry->file_attributes == ATTR_ARCHIVE)) && (dir_entry->file_attributes != FREE_ENTRY);
 }
 
 int PFS_read_file_content(const char* path, off_t offset, char* buf, size_t size) {
@@ -840,7 +875,7 @@ int PFS_read_file_content(const char* path, off_t offset, char* buf, size_t size
 	Cluster* cluster = (Cluster*) malloc(sizeof(Cluster));
 //	AddressPFS_read_cluster(cluster, f_clusters[0]);
 	char* file_name = PFS_path_name(path);
-	Aux_printf("[PFS_read_file_content] Voy a leer el cluster %d a traves de la cache\n",f_clusters[0]);
+	Aux_printf("[PFS_read_file_content] Voy a leer el cluster %d a traves de la cache\n", f_clusters[0]);
 	Cache_read_cluster(cluster, f_clusters[0], file_name);
 	// Cargar 'buf' a partir del 'offset'
 
@@ -865,7 +900,7 @@ int PFS_read_file_content(const char* path, off_t offset, char* buf, size_t size
 	for (i = 1; i < f_size_clusters; i++) {
 		//AddressPFS_read_cluster(cluster, f_clusters[i]);
 		cluster = (Cluster*) malloc(sizeof(Cluster));
-		Aux_printf("[PFS_read_file_content] Voy a leer el cluster %d a traves de la cache, i: %d\n",f_clusters[i],i);
+		Aux_printf("[PFS_read_file_content] Voy a leer el cluster %d a traves de la cache, i: %d\n", f_clusters[i], i);
 		Cache_read_cluster(cluster, f_clusters[i], file_name);
 		// Cargar 'buf' con clusters completos
 		bytes_to_copy = sizeof(Cluster);
@@ -880,7 +915,7 @@ int PFS_read_file_content(const char* path, off_t offset, char* buf, size_t size
 	//Aux_printf("[PFS_read_file_content] Ultimo caso, size - loaded_size: %d\n", size - loaded_size);
 	if (abs(size - loaded_size) > 0) {
 		cluster = (Cluster*) malloc(sizeof(Cluster));
-		Aux_printf("[PFS_read_file_content] Voy a leer el cluster %d a traves de la cache (ultimo caso) i:%d\n",f_clusters[i],i);
+		Aux_printf("[PFS_read_file_content] Voy a leer el cluster %d a traves de la cache (ultimo caso) i:%d\n", f_clusters[i], i);
 		Cache_read_cluster(cluster, f_clusters[i], file_name);
 		//Aux_printf("[PFS_read_file_content] LOADED SIZE: %ld, SIZE: %lu, BYTES_TO_COPY: %ld, N_cluster: %d\n", loaded_size, size, bytes_to_copy, f_clusters[i]);
 		memcpy(&(buf[loaded_size]), cluster, abs(size - loaded_size));
@@ -909,7 +944,8 @@ int PFS_read_file_content(const char* path, off_t offset, char* buf, size_t size
 
 // Retorna el nombre de una entrada long o short segun el parametro attr
 char* PFS_get_file_name(int attr, LongDirEntry* long_dir_entry, DirEntry* dir_entry) {
-	if (attr == ATTR_LONG_NAME)
+	if (attr == ATTR_LONG_NAME
+	)
 		return PFS_get_long_file_name(long_dir_entry);
 
 	return (char*) PFS_get_short_file_name(dir_entry);
@@ -1081,7 +1117,7 @@ int PFS_n_block_by_sector(int n_sector) {
 }
 
 // (22-12) Modificado de int a long int el parametro
-int PFS_n_clusters_by_bytes(long int bytes) {
+uint32_t PFS_n_clusters_by_bytes(uint32_t bytes) {
 	return ceil((double) bytes / (double) (bs->bytes_per_sector * bs->sectors_per_cluster));
 }
 
